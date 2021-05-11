@@ -1,22 +1,14 @@
 import React from "react";
-import Pet from "@frontendmasters/pet";
+import pet from "@frontendmasters/pet";
 import { navigate } from "@reach/router";
-import Modal from "./Modal";
 import Carousel from "./Carousel";
+import Modal from "./Modal";
 import ErrorBoundary from "./ErrorBoundary";
 import ThemeContext from "./ThemeContext";
 
 class Details extends React.Component {
-  // constructor(props) {
-  //   super(props);
-
-  //   this.state = {
-  //     loading: true,
-  //   };
-  // }
   state = { loading: true, showModal: false };
   componentDidMount() {
-    throw new Error("Error");
     pet
       .animal(this.props.id)
       .then(({ animal }) => {
@@ -24,14 +16,16 @@ class Details extends React.Component {
           url: animal.url,
           name: animal.name,
           animal: animal.type,
-          location: `${animal.contact.address.city}, ${animal.contact.address.state}`,
+          location: `${animal.contact.address.city}, ${
+            animal.contact.address.state
+          }`,
           description: animal.description,
           media: animal.photos,
           breed: animal.breeds.primary,
-          loading: false,
+          loading: false
         });
       })
-      .catch((err) => this.setState({ error: err }));
+      .catch(err => this.setState({ error: err }));
   }
   toggleModal = () => this.setState({ showModal: !this.state.showModal });
   adopt = () => navigate(this.state.url);
@@ -45,9 +39,9 @@ class Details extends React.Component {
       breed,
       location,
       description,
-      name,
       media,
-      showModal,
+      name,
+      showModal
     } = this.state;
 
     return (
@@ -56,8 +50,8 @@ class Details extends React.Component {
         <div>
           <h1>{name}</h1>
           <h2>{`${animal} — ${breed} — ${location}`}</h2>
-          <ThemeContext>
-            {(theme) => (
+          <ThemeContext.Consumer>
+            {([theme]) => (
               <button
                 onClick={this.toggleModal}
                 style={{ backgroundColor: theme }}
@@ -65,16 +59,14 @@ class Details extends React.Component {
                 Adopt {name}
               </button>
             )}
-          </ThemeContext>
+          </ThemeContext.Consumer>
           <p>{description}</p>
           {showModal ? (
             <Modal>
-              <div>
-                <h1>Would you like to adopt {name}?</h1>
-                <div className="button">
-                  <button onClick={this.adopt}>Yes</button>
-                  <button onClick={this.toggleModal}>No</button>
-                </div>
+              <h1>Would you like to adopt {name}?</h1>
+              <div className="buttons">
+                <button onClick={this.adopt}>Yes</button>
+                <button onClick={this.toggleModal}>No, I am a monster</button>
               </div>
             </Modal>
           ) : null}
@@ -84,7 +76,7 @@ class Details extends React.Component {
   }
 }
 
-export default function DetailsWithErrorBoundary(props) {
+export default function DetailsErrorBoundary(props) {
   return (
     <ErrorBoundary>
       <Details {...props} />
